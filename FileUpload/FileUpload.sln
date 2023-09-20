@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32825.248
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileUpload", "FileUpload\FileUpload.csproj", "{8E8C3217-B99A-42E8-B394-E22965987112}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureBlobService", "AzureBlobService\AzureBlobService.csproj", "{4DD44AF5-D2FF-4242-8378-5F47D2C969A1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8E8C3217-B99A-42E8-B394-E22965987112}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E8C3217-B99A-42E8-B394-E22965987112}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E8C3217-B99A-42E8-B394-E22965987112}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E8C3217-B99A-42E8-B394-E22965987112}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DD44AF5-D2FF-4242-8378-5F47D2C969A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DD44AF5-D2FF-4242-8378-5F47D2C969A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DD44AF5-D2FF-4242-8378-5F47D2C969A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DD44AF5-D2FF-4242-8378-5F47D2C969A1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B90A532D-403A-4E44-A6EE-60DCE19A7324}
+	EndGlobalSection
+EndGlobal
