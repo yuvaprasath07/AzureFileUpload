@@ -18,8 +18,13 @@ namespace FileUpload.Controllers
         public async Task<IActionResult> UploadBlobs(List<IFormFile> files)
         {
             var response = await _service.UploadFiles(files);
+            if (response == null)
+            {
+                return BadRequest();
+            }
             return Ok(response);
         }
+
         [HttpGet]
         public async Task<IActionResult> GetAllBlobs(string filename)
         {
@@ -27,5 +32,7 @@ namespace FileUpload.Controllers
             var response = await _service.GetBlobAndSaveToLocalPath(filename);
             return Ok(response);
         }
+
+       
     }
 }

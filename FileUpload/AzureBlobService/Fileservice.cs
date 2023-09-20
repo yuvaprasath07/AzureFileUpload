@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace AzureBlobService
 {
-    public class Fileservice: IFileService
+    public class Fileservice : IFileService
     {
         BlobServiceClient _blobClient;
         BlobContainerClient _containerClient;
@@ -16,6 +16,8 @@ namespace AzureBlobService
         }
         public async Task<List<Azure.Response<BlobContentInfo>>> UploadFiles(List<IFormFile> files)
         {
+            if (files.Count <= 0)
+             return null;
             var azureResponse = new List<Azure.Response<BlobContentInfo>>();
             foreach (var file in files)
             {
@@ -30,9 +32,11 @@ namespace AzureBlobService
             };
             return azureResponse;
         }
+
+
         public async Task<string> GetBlobAndSaveToLocalPath(string blobName)
         {
-            string localDirectory = @"\\192.168.0.5\vaf\task"; 
+            string localDirectory = @"\\192.168.0.5\vaf\task";
             string localPath = Path.Combine(localDirectory, blobName);
 
             BlobClient blobClient = _containerClient.GetBlobClient(blobName);
@@ -44,7 +48,7 @@ namespace AzureBlobService
 
             BlobDownloadInfo blobDownloadInfo = await blobClient.DownloadAsync();
 
-           
+
             Directory.CreateDirectory(localDirectory);
 
             using (FileStream fs = File.OpenWrite(localPath))
@@ -55,6 +59,8 @@ namespace AzureBlobService
             return localPath;
         }
 
+
+      
 
 
     }
