@@ -13,5 +13,7 @@ namespace AzureBlobService
         public Task<List<Azure.Response<BlobContentInfo>>> UploadFiles(List<IFormFile> files);
 
         public Task<string> GetBlobAndSaveToLocalPath(string blobName);
+
+        public  Task<bool> CreateContainerAndUploadFile(string containerName, string fileName, Stream fileStream);
     }
 }

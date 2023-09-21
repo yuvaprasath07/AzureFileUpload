@@ -17,7 +17,7 @@ namespace AzureBlobService
         public async Task<List<Azure.Response<BlobContentInfo>>> UploadFiles(List<IFormFile> files)
         {
             if (files.Count <= 0)
-             return null;
+                return null;
             var azureResponse = new List<Azure.Response<BlobContentInfo>>();
             foreach (var file in files)
             {
@@ -60,8 +60,23 @@ namespace AzureBlobService
         }
 
 
-      
+        public async Task<bool> CreateContainerAndUploadFile(string containerName, string fileName, Stream fileStream)
+        {
+            try
+            {
+         
+                BlobContainerClient containerClient = _blobClient.GetBlobContainerClient(containerName);
+                await containerClient.CreateIfNotExistsAsync();
 
+                await containerClient.UploadBlobAsync(fileName, fileStream);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
     }
 }
