@@ -45,6 +45,11 @@ namespace FileUpload.Controllers
 
                 foreach (var file in files)
                 {
+                    if (file.Length == 0)
+                    {
+                        continue;
+                    }
+
                     using (var memoryStream = new MemoryStream())
                     {
                         file.CopyTo(memoryStream);
@@ -67,5 +72,44 @@ namespace FileUpload.Controllers
             }
         }
 
+        [HttpPost("FolderCreate")]
+        public async Task<IActionResult> UploadFiles([FromForm] List<IFormFile> files, [FromQuery] string containerName, [FromQuery] string folderName)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(containerName))
+                {
+                    return BadRequest("Container name is required.");
+                }
+
+                foreach (var file in files)
+                {
+                    if (file.Length == 0)
+                    {
+                        continue;
+                    }
+
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        file.CopyTo(memoryStream);
+                        memoryStream.Position = 0;
+
+                        bool uploadResult = await _service.CreateContainerAndUploadFile(containerName, folderName, file.FileName, memoryStream);
+
+                        if (!uploadResult)
+                        {
+                            return BadRequest($"Failed to upload {file.FileName} to container {containerName}/{folderName}");
+                        }
+                    }
+                }
+
+                return Ok("Files uploaded successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }
+

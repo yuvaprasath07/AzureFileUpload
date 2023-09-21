@@ -78,5 +78,27 @@ namespace AzureBlobService
             }
         }
 
+
+        public async Task<bool> CreateContainerAndUploadFile(string containerName, string folderName, string fileName, Stream fileStream)
+        {
+            try
+            {
+                // Combine the folderName and fileName with a '/' delimiter to create a virtual directory.
+                string blobName = string.IsNullOrEmpty(folderName) ? fileName : $"{folderName}/{fileName}";
+
+                BlobContainerClient containerClient = _blobClient.GetBlobContainerClient(containerName);
+                await containerClient.CreateIfNotExistsAsync();
+
+                BlobClient blobClient = containerClient.GetBlobClient(blobName);
+                await blobClient.UploadAsync(fileStream, overwrite: true);
+
+                return true;
+            }
+            catch
+            {
+
+                return false;
+            }
+        }
     }
 }
