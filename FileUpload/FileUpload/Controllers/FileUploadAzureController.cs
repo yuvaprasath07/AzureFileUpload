@@ -1,6 +1,4 @@
-﻿using Azure.Storage.Blobs;
-using AzureBlobService;
-using Microsoft.AspNetCore.Http;
+﻿using AzureBlobService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FileUpload.Controllers
@@ -109,6 +107,18 @@ namespace FileUpload.Controllers
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
+        }
+
+        [HttpGet("download/{filename}")]
+        public async Task<IActionResult> DownloadBlobAsExcel(string filename)
+        {
+            string filePath = await _service.ConvertJsonToExcelAndDownload(filename);   
+
+            if (filePath == null)
+            {
+                return NotFound(); // Or handle the error appropriately
+            }
+            return PhysicalFile(filePath, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "studentdata.xlsx");
         }
     }
 }
