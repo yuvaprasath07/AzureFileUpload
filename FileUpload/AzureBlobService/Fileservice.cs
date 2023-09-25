@@ -8,21 +8,14 @@ using OfficeOpenXml;
 
 namespace AzureBlobService
 {
-    public class MyDataObject
-    {
-        public string Property1 { get; set; }
-        public string Property2 { get; set; }
-        // Add more properties as needed
-    }
     public class Fileservice : IFileService
     {
-        BlobServiceClient _blobClient;
-        BlobContainerClient _containerClient;
-        string azureConnectionString = "DefaultEndpointsProtocol=https;AccountName=001files;AccountKey=C4x415dewVYLPRID15XW7IbBZ38BzGbm7gtaKyJSoLrdmz5RbCpkHLJgav7xF1hoXt2qwnYbOGaH+AStEwLubA==;EndpointSuffix=core.windows.net";
-        public Fileservice()
+        private readonly BlobServiceClient _blobServiceClient;
+ 
+        public Fileservice(BlobServiceClient blobServiceClient)
         {
-            _blobClient = new BlobServiceClient(azureConnectionString);
-            _containerClient = _blobClient.GetBlobContainerClient("filecontainer");
+
+            _blobServiceClient = blobServiceClient;
         }
 
         public async Task<List<Azure.Response<BlobContentInfo>>> UploadFiles(List<IFormFile> files)
@@ -37,7 +30,8 @@ namespace AzureBlobService
                 {
                     file.CopyTo(memoryStream);
                     memoryStream.Position = 0;
-                    var client = await _containerClient.UploadBlobAsync(fileName, memoryStream, default);
+                    var blobContainer = _blobServiceClient.GetBlobContainerClient("filecontainer");
+                    var client = await blobContainer.UploadBlobAsync(fileName, memoryStream, default);
                     azureResponse.Add(client);
                 }
             };
@@ -50,7 +44,9 @@ namespace AzureBlobService
             string localDirectory = @"\\192.168.0.5\vaf\task";
             string localPath = Path.Combine(localDirectory, blobName);
 
-            BlobClient blobClient = _containerClient.GetBlobClient(blobName);
+            var blobContainer = _blobServiceClient.GetBlobContainerClient("filecontainer");
+            var blobClient = blobContainer.GetBlobClient(blobName);
+
 
             if (!await blobClient.ExistsAsync())
             {
@@ -70,36 +66,16 @@ namespace AzureBlobService
             return localPath;
         }
 
-
-        public async Task<bool> CreateContainerAndUploadFile(string containerName, string fileName, Stream fileStream)
-        {
-            try
-            {
-
-                BlobContainerClient containerClient = _blobClient.GetBlobContainerClient(containerName);
-                await containerClient.CreateIfNotExistsAsync();
-
-                await containerClient.UploadBlobAsync(fileName, fileStream);
-
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-
         public async Task<bool> CreateContainerAndUploadFile(string containerName, string folderName, string fileName, Stream fileStream)
         {
             try
             {
+                var blobContainer = _blobServiceClient.GetBlobContainerClient(containerName);
+               
+
                 string blobName = string.IsNullOrEmpty(folderName) ? fileName : $"{folderName}/{fileName}";
-
-                BlobContainerClient containerClient = _blobClient.GetBlobContainerClient(containerName);
-                await containerClient.CreateIfNotExistsAsync();
-
-                BlobClient blobClient = containerClient.GetBlobClient(blobName);
+                await blobContainer.CreateIfNotExistsAsync();
+                var blobClient = blobContainer.GetBlobClient(blobName);
                 await blobClient.UploadAsync(fileStream, overwrite: true);
 
                 return true;
@@ -113,7 +89,9 @@ namespace AzureBlobService
 
         public async Task<string> ConvertJsonToExcelAndDownload(string filename)
         {
-            BlobClient blobClient = _containerClient.GetBlobClient(filename);
+            var blobContainer = _blobServiceClient.GetBlobContainerClient("filecontainer");
+            var blobClient = blobContainer.GetBlobClient(filename);
+       
 
             try
             {

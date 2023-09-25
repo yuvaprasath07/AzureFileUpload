@@ -1,4 +1,5 @@
-﻿using AzureBlobService;
+﻿using Azure.Storage.Blobs;
+using AzureBlobService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FileUpload.Controllers
@@ -8,9 +9,12 @@ namespace FileUpload.Controllers
     public class FileUploadAzureController : ControllerBase
     {
         IFileService _service;
-        public FileUploadAzureController(IFileService service)
+        private readonly BlobServiceClient _blobServiceClient;
+
+        public FileUploadAzureController(IFileService service, BlobServiceClient blobServiceClient)
         {
             _service = service;
+            _blobServiceClient = blobServiceClient;
         }
 
         [HttpPost]
@@ -31,44 +35,7 @@ namespace FileUpload.Controllers
             return Ok(response);
         }
 
-        [HttpPost("upload")]
-        public async Task<IActionResult> UploadFiles(List<IFormFile> files, string containerName)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(containerName))
-                {
-                    return BadRequest("Container name is required.");
-                }
-
-                foreach (var file in files)
-                {
-                    if (file.Length == 0)
-                    {
-                        continue;
-                    }
-
-                    using (var memoryStream = new MemoryStream())
-                    {
-                        file.CopyTo(memoryStream);
-                        memoryStream.Position = 0;
-
-                        bool uploadResult = await _service.CreateContainerAndUploadFile(containerName, file.FileName, memoryStream);
-
-                        if (!uploadResult)
-                        {
-                            return BadRequest($"Failed to upload {file.FileName} to container {containerName}");
-                        }
-                    }
-                }
-
-                return Ok("Files uploaded successfully.");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
+        
 
         [HttpPost("FolderCreate")]
         public async Task<IActionResult> UploadFiles([FromForm] List<IFormFile> files, [FromQuery] string containerName, [FromQuery] string folderName)

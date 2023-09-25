@@ -1,4 +1,5 @@
-﻿using Azure.Storage.Blobs.Models;
+﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace AzureBlobService
 
         public Task<string> GetBlobAndSaveToLocalPath(string blobName);
 
-        public Task<bool> CreateContainerAndUploadFile(string containerName, string fileName, Stream fileStream);
+       
 
         public Task<bool> CreateContainerAndUploadFile(string containerName, string folderName, string fileName, Stream fileStream);
 
