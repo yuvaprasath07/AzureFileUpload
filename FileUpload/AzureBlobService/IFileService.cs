@@ -15,10 +15,11 @@ namespace AzureBlobService
 
         public Task<string> GetBlobAndSaveToLocalPath(string blobName);
 
-       
-
         public Task<bool> CreateContainerAndUploadFile(string containerName, string folderName, string fileName, Stream fileStream);
 
-        public  Task<string> ConvertJsonToExcelAndDownload(string blobName);
+        public Task<string> ConvertJsonToExcelAndDownload(string blobName);
+
+
+        public  Task<string> CreateSubfolderAsync(string containerName, string folderPath, string subfolderName);
     }
 }

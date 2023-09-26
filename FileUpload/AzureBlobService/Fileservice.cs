@@ -1,5 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Azure.Storage.Blobs.Specialized;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -66,6 +67,7 @@ namespace AzureBlobService
             return localPath;
         }
 
+
         public async Task<bool> CreateContainerAndUploadFile(string containerName, string folderName, string fileName, Stream fileStream)
         {
             try
@@ -97,7 +99,7 @@ namespace AzureBlobService
             {
                 if (!await blobClient.ExistsAsync())
                 {
-                    return null; // Blob doesn't exist, return early
+                    return null;
                 }
 
                 BlobDownloadInfo blobDownloadInfo = await blobClient.DownloadAsync();
@@ -114,7 +116,6 @@ namespace AzureBlobService
 
                         JArray dataArray = JArray.Parse(content);
 
-                        // Extract headers from the first JSON object in the array
                         if (dataArray.Count > 0)
                         {
                             var firstObject = dataArray[0];
@@ -154,5 +155,29 @@ namespace AzureBlobService
             }
         }
 
+        public async Task<string> CreateSubfolderAsync(string containerName, string folderPath, string subfolderName)
+        {
+            try
+            {
+               
+                BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+                string subfolderPath = folderPath + "/" + subfolderName;
+                BlockBlobClient blobClient = containerClient.GetBlockBlobClient(subfolderPath + "/placeholder.txt");
+                using (Stream stream = new MemoryStream())
+                {
+                    await blobClient.UploadAsync(stream);
+                }
+
+                return ($"Subfolder '{subfolderName}' created in folder '{folderPath}' of container '{containerName}'.");
+            }
+            catch (Exception ex)
+            {
+                return ($"Error creating subfolder: {ex.Message}");
+            }
+        }
+
+
     }
+  
+
 }

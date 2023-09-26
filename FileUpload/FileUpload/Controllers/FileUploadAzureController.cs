@@ -35,8 +35,6 @@ namespace FileUpload.Controllers
             return Ok(response);
         }
 
-        
-
         [HttpPost("FolderCreate")]
         public async Task<IActionResult> UploadFiles([FromForm] List<IFormFile> files, [FromQuery] string containerName, [FromQuery] string folderName)
         {
@@ -76,16 +74,23 @@ namespace FileUpload.Controllers
             }
         }
 
-        [HttpGet("download/{filename}")]
+        [HttpGet("download")]
         public async Task<IActionResult> DownloadBlobAsExcel(string filename)
         {
             string filePath = await _service.ConvertJsonToExcelAndDownload(filename);   
 
             if (filePath == null)
             {
-                return NotFound(); // Or handle the error appropriately
+                return NotFound();
             }
             return PhysicalFile(filePath, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "studentdata.xlsx");
+        }
+
+        [HttpPost("SubFolder")]
+        public async Task<IActionResult> CreateSubfolderAsync(string containerName, string folderPath, string subfolderName)
+        {
+            var res = await _service.CreateSubfolderAsync(containerName, folderPath, subfolderName);
+            return Ok(res);
         }
     }
 }
